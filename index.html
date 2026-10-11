@@ -117,7 +117,7 @@ input,select,textarea{font:inherit;color:inherit}
 .ex-img{width:16px;height:16px;object-fit:contain}
 
 /* abas de diagramas */
-#center{flex:1;display:flex;flex-direction:column;min-width:0}
+#center{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
 .dtabs{display:flex;align-items:flex-end;gap:2px;height:32px;padding:4px 8px 0;background:#dfe2e6;border-bottom:1px solid var(--line);overflow-x:auto;flex:none}
 .tab{display:flex;align-items:center;gap:6px;height:28px;padding:0 6px 0 12px;background:#eceef1;border:1px solid var(--line);border-bottom:0;border-radius:6px 6px 0 0;cursor:pointer;max-width:220px;flex:none;color:var(--ink2)}
 .tab:hover{background:#f4f5f7}
@@ -270,6 +270,7 @@ html{touch-action:manipulation;-webkit-text-size-adjust:100%}
 body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
 #stage{-webkit-touch-callout:none}
 .only-m{display:none}
+#mobileEvents,.drawer-close{display:none}
 #scrim{position:fixed;inset:0;z-index:40;background:rgba(20,22,26,.45)}
 #ribbon.collapsed{display:none}
 @media (max-width:980px){#left{width:200px}#right{width:244px}}
@@ -288,10 +289,22 @@ body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
   #ribbon{height:auto;min-height:92px;overflow-x:auto}
   .rb.big{width:64px;height:70px}.rb.small{height:30px}
   .rsel{height:30px}
+  /* Eventos sempre acessíveis, mesmo com a gaveta fechada. */
+  #mobileEvents{display:flex;align-items:center;gap:6px;flex:none;min-height:64px;padding:5px 8px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .mobile-events-title{font-size:11px;font-weight:600;color:var(--ink2);flex:none}
+  #mobileEvents .pal-item{display:flex;flex-direction:column;justify-content:center;gap:1px;flex:1;min-width:0;height:52px;padding:2px 3px;font-size:10px;line-height:1.2;white-space:nowrap}
+  #mobileEvents .pal-item svg{width:26px;height:26px}
+  .mobile-events-more{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:1;min-width:44px;height:52px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--red-d);font-size:11px}
+  .mobile-events-more:hover{background:var(--blue-bg)}
   /* gavetas laterais */
   #left,#right{position:fixed;z-index:50;top:0;bottom:0;width:min(86vw,330px);box-shadow:0 0 28px rgba(0,0,0,.4);padding-top:env(safe-area-inset-top)}
   #left{left:0}#right{right:0}
+  .ptabs{flex:none}
   .ptabs button,.ptitle{height:42px}
+  .drawer-close{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;margin-left:auto}
+  .ptitle{flex:none;justify-content:space-between}
+  #left .psearch{flex:none}
+  #left .pbody,#right .pbody{min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   .pal-item{min-width:50px;height:46px}
   .pal-h{padding:10px 8px}
   .ex-i{padding-top:7px;padding-bottom:7px}
@@ -336,6 +349,8 @@ body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
 }
 @media (max-height:520px) and (orientation:landscape){
   #titlebar{height:36px}.qb{width:32px;height:32px}
+  #mobileEvents{min-height:46px;padding-top:3px;padding-bottom:3px}
+  #mobileEvents .pal-item,.mobile-events-more{height:40px;flex-direction:row;gap:5px}
   #ribbon{min-height:80px}
   #status{height:30px}
 }
@@ -353,20 +368,21 @@ body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
     </div>
     <div id="docName" class="docname"></div>
     <div class="tb-right">
-      <button class="qb pnl-toggle" data-target="#left" title="Painel de elementos"><i class="ph" data-ico="palette"></i></button>
-      <button class="qb pnl-toggle" data-target="#right" title="Painel de propriedades"><i class="ph" data-ico="props"></i></button>
+      <button class="qb pnl-toggle" data-target="#left" title="Painel de elementos e eventos" aria-label="Elementos e eventos" aria-controls="left"><i class="ph" data-ico="palette"></i></button>
+      <button class="qb pnl-toggle" data-target="#right" title="Painel de propriedades" aria-label="Propriedades" aria-controls="right"><i class="ph" data-ico="props"></i></button>
     </div>
   </header>
   <nav id="ribbonTabs" aria-label="Abas da faixa de opções"></nav>
   <section id="ribbon" aria-label="Faixa de opções"></section>
   <main id="work">
     <aside id="left">
-      <div id="leftTabs" class="ptabs"><button data-lt="pal" class="active">Elementos</button><button data-lt="ex">Explorador</button></div>
+      <div id="leftTabs" class="ptabs"><button data-lt="pal" class="active">Elementos</button><button data-lt="ex">Explorador</button><button class="drawer-close" data-close-drawer aria-label="Fechar painel de elementos"><i class="ph" data-ico="close"></i></button></div>
       <div id="palPane" class="ppane"><div class="psearch"><input id="palSearch" type="search" placeholder="Buscar elemento…" aria-label="Buscar elemento"></div><div id="palBody" class="pbody"></div></div>
       <div id="exPane" class="ppane" hidden><div class="psearch"><input id="exSearch" type="search" placeholder="Localizar no modelo…" aria-label="Localizar no modelo"></div><div id="exBody" class="pbody"></div></div>
     </aside>
     <section id="center">
       <div id="tabs" class="dtabs" role="tablist"></div>
+      <div id="mobileEvents" role="group" aria-label="Inserir eventos"></div>
       <div id="canvasWrap" tabindex="-1">
         <svg id="stage" xmlns="http://www.w3.org/2000/svg" width="2000" height="1200">
           <defs>
@@ -383,7 +399,7 @@ body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
       </div>
     </section>
     <aside id="right">
-      <div class="ptitle"><span id="propsTitle">Propriedades</span></div>
+      <div class="ptitle"><span id="propsTitle">Propriedades</span><button class="icon-btn drawer-close" data-close-drawer aria-label="Fechar painel de propriedades"><i class="ph" data-ico="close"></i></button></div>
       <div id="propsBody" class="pbody props"></div>
     </aside>
   </main>
@@ -3265,7 +3281,12 @@ const UI = {
     $('#docName').textContent = (Ed.dirty ? '• ' : '') + (Ed.model ? Ed.model.fileName : '');
     UI.buildTabs();
     $('#qUndo').disabled = !(Ed.d && Ed.d.undo.length); $('#qRedo').disabled = !(Ed.d && Ed.d.redo.length);
-    $$('.pnl-toggle').forEach(b => b.classList.toggle('on', !$(b.dataset.target).hidden));
+    $$('.pnl-toggle').forEach(b => {
+      const open = !$(b.dataset.target).hidden;
+      b.classList.toggle('on', open); b.setAttribute('aria-expanded', String(open));
+    });
+    const allEvents = $('[data-all-events]');
+    if (allEvents) allEvents.setAttribute('aria-expanded', String(!$('#left').hidden && !$('#palPane').hidden));
   },
 };
 const KIND_LABEL = { start: 'Evento de início', inter: 'Evento intermediário', end: 'Evento de fim', gateway: 'Gateway', task: 'Tarefa', subprocess: 'Subprocesso', flow: 'Fluxo de sequência', msg: 'Fluxo de mensagem', assoc: 'Associação', art: 'Artefato', pool: 'Pool', lane: 'Raia', data: 'Dados' };
@@ -3412,7 +3433,12 @@ const Panels = {
   init() {
     const left = $('#left');
     $('#leftTabs').addEventListener('click', e => { const b = e.target.closest('[data-lt]'); if (b) this.showLeft(b.dataset.lt); });
-    this.palette(); this.explorer();
+    this.palette(); this.explorer(); this.mobileEvents();
+    $('#mobileEvents').addEventListener('click', e => {
+      if (e.target.closest('[data-all-events]')) this.showEvents();
+      else this.palClick(e);
+    });
+    $$('[data-close-drawer]').forEach(b => b.onclick = () => this.closeDrawers());
     $('#palBody').addEventListener('click', e => this.palClick(e));
     $('#palBody').addEventListener('dblclick', e => this.palDbl(e));
     $('#palBody').addEventListener('dragstart', e => {
@@ -3452,6 +3478,23 @@ const Panels = {
     mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
     $('#scrim').addEventListener('pointerdown', () => this.closeDrawers());
     apply();
+  },
+
+  /* A barra usa as mesmas definições e inserção da paleta completa. */
+  mobileEvents() {
+    const basic = [['start:None', 'Início'], ['inter:None', 'Intermediário'], ['end:None', 'Fim']];
+    $('#mobileEvents').innerHTML = '<span class="mobile-events-title">Eventos</span>' + basic.map(([key, label]) => {
+      const it = this._items.get(key);
+      return `<button type="button" class="pal-item" data-key="${key}" title="${U.esc(it.label)}" aria-label="Inserir ${U.esc(KIND_LABEL[it.kind].toLowerCase())}">${this.preview(it)}<span>${label}</span></button>`;
+    }).join('') + `<button type="button" class="mobile-events-more" data-all-events aria-controls="left" aria-label="Ver todos os tipos de eventos">${ico('palette', 20)}<span>Todos</span></button>`;
+  },
+  showEvents() {
+    this.toggleLeftVisible(true); this.showLeft('pal');
+    $('#palSearch').value = ''; this.filterPalette();
+    this.collapsed.delete('events');
+    $('#palBody [data-sec="events"]').classList.remove('closed');
+    $('#palBody').scrollTop = 0;
+    View.schedule(); UI.refresh();
   },
 
   /* ----- paleta ----- */
